@@ -23,18 +23,3 @@ section {
 	justify-content: center;
 	align-items: center;
 }
-
-input {
-	text-align: center;
-	max-width: 2.5em;
-}
-
-button {
-	font-size: 2rem;
-	margin: 0.5em 0 0.5em 0.5em;
-	min-width: 2em;
-}
-
-button:first-child {
-	margin-left: 0;
-}

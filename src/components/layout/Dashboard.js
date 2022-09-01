@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom";
+import AddEventForm from "../forms/AddEventForm";
 import Header from "./Header";
 
 const Dashboard = () => {
@@ -8,6 +9,7 @@ const Dashboard = () => {
 			<main>
 				<Outlet />
 			</main>
+			<AddEventForm />
 		</>
 	);
 };

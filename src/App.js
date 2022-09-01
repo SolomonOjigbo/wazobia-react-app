@@ -1,16 +1,18 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Dashboard from "./components/layout/Dashboard";
 import Login from "./components/forms/Login";
 import Signup from "./components/forms/Signup";
 
 function App() {
 	return (
 		<BrowserRouter>
-			<div className="App">
-				<Routes>
-					<Route path="/login" element={<Login />} />
-					<Route path="/signup" element={<Signup />} />
-				</Routes>
-			</div>
+			<Routes>
+				<Route path="/" element={<Dashboard />}>
+					{/* <p>content</p> */}
+				</Route>
+				<Route path="/login" element={<Login />} />
+				<Route path="/signup" element={<Signup />} />
+			</Routes>
 		</BrowserRouter>
 	);
 }

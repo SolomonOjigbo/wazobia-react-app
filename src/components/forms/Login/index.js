@@ -1,4 +1,3 @@
-import React from "react";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -6,7 +5,7 @@ import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -15,6 +14,9 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 import { Wrapper } from "./Login.styles";
+import { useDispatch } from "react-redux";
+import { useState } from "react";
+import { useLoginMutation } from "../../../features/api/auth";
 
 const validationSchema = Yup.object().shape({
 	email: Yup.string().required("Email is required").email("Email is invalid"),
@@ -24,10 +26,17 @@ const validationSchema = Yup.object().shape({
 });
 
 function Login() {
-	const [showPassword, setShowPassword] = React.useState(false);
-
+	const [formData, setFormData] = useState({
+		username: "",
+		password: "",
+	});
+	const [showPassword, setShowPassword] = useState(false);
 	const handleClickShowPassword = () => setShowPassword(!showPassword);
 	const handleMouseDownPassword = () => setShowPassword(!showPassword);
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
+	const login = useLoginMutation();
 
 	const {
 		register,
@@ -40,18 +49,26 @@ function Login() {
 		criteriaMode: "all",
 	});
 
-	const onSubmit = (e) => {
-		e.preventDefault();
+	const handleChange = ({ target: { name, value } }) =>
+		setFormData((prev) => ({ ...prev, [name]: value }));
+
+	const onSubmit = async () => {
+		try {
+			await login(formData).unwrap();
+			navigate("/");
+		} catch (err) {
+			console.log(err.message);
+		}
 	};
 
 	return (
-		<Wrapper>
-			<Container>
+		<Container>
+			<Wrapper>
 				<CssBaseline />
 				<Box
 					sx={{
-						marginTop: 3,
-						padding: 5,
+						marginTop: 15,
+						padding: 7,
 					}}
 				>
 					<Grid textAlign="center">
@@ -74,6 +91,7 @@ function Login() {
 							fullWidth
 							id="email"
 							label="Email Address"
+							onChange={handleChange}
 							name="email"
 							autoComplete="email"
 							autoFocus
@@ -87,6 +105,7 @@ function Login() {
 							margin="normal"
 							required
 							fullWidth
+							onChange={handleChange}
 							name="password"
 							label="Password"
 							type={showPassword ? "text" : "password"}
@@ -124,8 +143,8 @@ function Login() {
 						</Button>
 					</Box>
 				</Box>
-			</Container>
-		</Wrapper>
+			</Wrapper>
+		</Container>
 	);
 }
 

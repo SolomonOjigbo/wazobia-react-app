@@ -49,14 +49,13 @@ function Signup() {
 	};
 
 	return (
-		<Wrapper>
-			<Container component="main">
+		<Container component="main">
+			<Wrapper>
 				<CssBaseline />
 				<Box
 					sx={{
-						marginTop: 3,
+						marginTop: 15,
 						padding: 5,
-						alignItems: "center",
 					}}
 				>
 					<Grid textAlign="center">
@@ -163,8 +162,8 @@ function Signup() {
 						</Button>
 					</Box>
 				</Box>
-			</Container>
-		</Wrapper>
+			</Wrapper>
+		</Container>
 	);
 }
 

@@ -7,8 +7,15 @@ import {
 	HeaderLeft,
 	HeaderRight,
 } from "./Layout.styles";
+import { useDispatch, useSelector } from "react-redux";
+import { logout, selectCurrentUser } from "../../features/user/userSlice";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function Header() {
+	const user = useSelector(selectCurrentUser);
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
 	const [anchorEl, setAnchorEl] = React.useState(null);
 
 	const isMenuOpen = Boolean(anchorEl);
@@ -19,6 +26,11 @@ function Header() {
 
 	const handleMenuClose = () => {
 		setAnchorEl(null);
+	};
+
+	const handleLogout = () => {
+		dispatch(logout);
+		navigate("/login");
 	};
 
 	const menuId = "account-menu";
@@ -38,7 +50,7 @@ function Header() {
 			open={isMenuOpen}
 			onClose={handleMenuClose}
 		>
-			<MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+			<MenuItem onClick={handleLogout}>Logout</MenuItem>
 		</Menu>
 	);
 
@@ -49,7 +61,7 @@ function Header() {
 			</HeaderLeft>
 
 			<HeaderRight>
-				<h4>Username</h4>
+				{user ? `${user.first_name} ${user.last_name}` : <h4>Username</h4>}
 				<HeaderAvatar onClick={handleProfileMenuOpen} />
 				{renderMenu}
 			</HeaderRight>

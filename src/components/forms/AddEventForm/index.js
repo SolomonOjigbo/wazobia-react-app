@@ -12,14 +12,18 @@ import Typography from "@mui/material/Typography";
 import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { addNewItem } from "../../../features/api/actions";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 const validationSchema = Yup.object().shape({
-	itemName: Yup.string().required("Item Name is required"),
+	name: Yup.string().required("Item Name is required"),
 	description: Yup.string().required("Description is required"),
 });
 
 export default function AddEventForm() {
-	const [open, setOpen] = React.useState(false);
+	const [open, setOpen] = useState(false);
+	const dispatch = useDispatch();
 	const {
 		register,
 		handleSubmit,
@@ -38,8 +42,9 @@ export default function AddEventForm() {
 		setOpen(false);
 	};
 
-	const onSubmit = (e) => {
-		e.preventDefault();
+	const onSubmit = (data) => {
+		dispatch(addNewItem(data));
+		setOpen(false);
 	};
 
 	return (
@@ -86,19 +91,13 @@ export default function AddEventForm() {
 								{errors.description?.message}
 							</Typography>
 						</Grid>
-						{/* <Stack direction="row" spacing={3}>
-							
-							
-						</Stack> */}
 					</Grid>
 				</DialogContent>
 				<DialogActions>
-					{/* <Button onClick={handleClose}>Cancel</Button> */}
 					<Button
 						type="submit"
 						variant="contained"
 						sx={{ mt: 3, mb: 2 }}
-						disabled={!isDirty || !isValid}
 						onClick={handleSubmit(onSubmit)}
 					>
 						Create Event

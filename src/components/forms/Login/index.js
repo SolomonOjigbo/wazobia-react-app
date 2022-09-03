@@ -16,7 +16,8 @@ import IconButton from "@mui/material/IconButton";
 import { Wrapper } from "./Login.styles";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
-import { useLoginMutation } from "../../../features/api/auth";
+import { login } from "../../../features/api/auth";
+// import { setCredentials } from "../../../features/user/userSlice";
 
 const validationSchema = Yup.object().shape({
 	email: Yup.string().required("Email is required").email("Email is invalid"),
@@ -26,17 +27,11 @@ const validationSchema = Yup.object().shape({
 });
 
 function Login() {
-	const [formData, setFormData] = useState({
-		username: "",
-		password: "",
-	});
 	const [showPassword, setShowPassword] = useState(false);
 	const handleClickShowPassword = () => setShowPassword(!showPassword);
 	const handleMouseDownPassword = () => setShowPassword(!showPassword);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-
-	const login = useLoginMutation();
 
 	const {
 		register,
@@ -49,16 +44,9 @@ function Login() {
 		criteriaMode: "all",
 	});
 
-	const handleChange = ({ target: { name, value } }) =>
-		setFormData((prev) => ({ ...prev, [name]: value }));
-
-	const onSubmit = async () => {
-		try {
-			await login(formData).unwrap();
-			navigate("/");
-		} catch (err) {
-			console.log(err.message);
-		}
+	const onSubmit = (data) => {
+		dispatch(login(data));
+		navigate("/");
 	};
 
 	return (
@@ -91,7 +79,6 @@ function Login() {
 							fullWidth
 							id="email"
 							label="Email Address"
-							onChange={handleChange}
 							name="email"
 							autoComplete="email"
 							autoFocus
@@ -105,7 +92,6 @@ function Login() {
 							margin="normal"
 							required
 							fullWidth
-							onChange={handleChange}
 							name="password"
 							label="Password"
 							type={showPassword ? "text" : "password"}

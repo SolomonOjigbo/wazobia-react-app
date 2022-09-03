@@ -1,27 +1,59 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState } from "../../app/store";
+import axios from "axios";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 
-export const api = createApi({
-	baseQuery: fetchBaseQuery({
-		baseUrl: "https://test-api.sytbuilder.com/",
-		prepareHeaders: (headers, { getState }) => {
-			// By default, if we have a token in the store, let's use that for authenticated requests
-			const token = getState().auth.token;
-			if (token) {
-				headers.set("authorization", `Bearer ${token}`);
+const API_URL = "https://test-api.sytbuilder.com/";
+
+export const login = createAsyncThunk(
+	"login",
+	async ({ email, password }, { rejectWithValue }) => {
+		try {
+			const config = {
+				headers: {
+					"Content-Type": "application/json",
+				},
+			};
+			const { data } = await axios.post(
+				API_URL + "tokens",
+				{ email, password },
+				config
+			);
+			localStorage.setItem("token", data.token);
+			return data;
+		} catch (error) {
+			if (error.response && error.response.data.message) {
+				return rejectWithValue(error.response.data.message);
+			} else {
+				return rejectWithValue(error.message);
 			}
-			return headers;
-		},
-	}),
-	endpoints: (builder) => ({
-		login: builder.mutation({
-			query: (credentials) => ({
-				url: "me",
-				method: "POST",
-				body: credentials,
-			}),
-		}),
-	}),
-});
+		}
+	}
+);
 
-export const { useLoginMutation } = api;
+export const signup = createAsyncThunk(
+	"signup",
+	async ({ first_name, last_name, email, password }, { rejectWithValue }) => {
+		try {
+			const config = {
+				headers: {
+					"Content-Type": "application/json",
+				},
+			};
+
+			const { data } = await axios.post(
+				API_URL + "me",
+				{ first_name, last_name, email, password },
+				config
+			);
+			if (data.status === 200) {
+				localStorage.setItem("token", data.token);
+			}
+			return data;
+		} catch (error) {
+			if (error.response && error.response.data.message) {
+				return rejectWithValue(error.response.data.message);
+			} else {
+				return rejectWithValue(error.message);
+			}
+		}
+	}
+);

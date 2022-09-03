@@ -1,26 +1,65 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { api } from "../api/auth";
+import { login, signup } from "../api/auth";
+
+const token = localStorage.getItem("token")
+	? localStorage.getItem("token")
+	: null;
+
+const initialState = {
+	loading: false,
+	user: null,
+	token: null,
+	error: null,
+	success: false,
+};
 
 const userSlice = createSlice({
 	name: "auth",
-	initialState: { user: null, token: null },
+	initialState,
 	reducers: {
 		logout: (state) => {
+			localStorage.removeItem("token"); // delete token from storage
+			state.loading = false;
 			state.user = null;
 			state.token = null;
+			state.error = null;
 		},
 	},
-	extraReducers: (builder) => {
-		builder.addMatcher(
-			api.endpoints.login.matchFulfilled,
-			(state, { payload }) => {
-				state.token = payload.token;
-				state.user = payload.user;
-			}
-		);
+	extraReducers: {
+		// login user
+		[login.pending]: (state) => {
+			state.loading = true;
+			state.error = null;
+		},
+		[login.fulfilled]: (state, { payload }) => {
+			state.loading = false;
+			state.user = payload.user;
+			state.token = payload.token;
+		},
+		[login.rejected]: (state, { payload }) => {
+			state.loading = false;
+			state.error = payload.message;
+		},
+		// register user
+		[signup.pending]: (state) => {
+			state.loading = true;
+			state.error = null;
+		},
+		[signup.fulfilled]: (state, { payload }) => {
+			state.loading = false;
+			state.success = true; // registration successful
+			state.user = payload.user;
+			state.token = payload.token;
+		},
+		[signup.rejected]: (state, { payload }) => {
+			state.loading = false;
+			state.error = payload;
+		},
 	},
 });
 
-export default userSlice.reducer;
+export const { logout } = userSlice.actions;
 
-export const selectCurrentUser = (state) => state.auth.user;
+export const selectCurrentUser = (state) => state.user.user;
+
+export default userSlice.reducer;

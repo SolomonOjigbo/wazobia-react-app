@@ -6,7 +6,7 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -15,6 +15,9 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 import { Wrapper } from "./Signup.styles";
+
+import { useDispatch } from "react-redux";
+import { signup } from "../../../features/api/auth";
 
 const validationSchema = Yup.object().shape({
 	first_name: Yup.string().required("First Name is required"),
@@ -29,6 +32,8 @@ const validationSchema = Yup.object().shape({
 });
 
 function Signup() {
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const [showPassword, setShowPassword] = useState(false);
 	const handleClickShowPassword = () => setShowPassword(!showPassword);
 	const handleMouseDownPassword = () => setShowPassword(!showPassword);
@@ -44,8 +49,9 @@ function Signup() {
 		criteriaMode: "all",
 	});
 
-	const onSubmit = (e) => {
-		e.preventDefault();
+	const onSubmit = (data) => {
+		dispatch(signup(data));
+		navigate("/");
 	};
 
 	return (

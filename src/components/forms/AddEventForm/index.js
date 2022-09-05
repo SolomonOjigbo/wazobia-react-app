@@ -27,7 +27,7 @@ export default function AddEventForm() {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isDirty, isValid },
+		formState: { errors, isValid },
 	} = useForm({
 		resolver: yupResolver(validationSchema),
 		mode: "onChange",
@@ -42,8 +42,8 @@ export default function AddEventForm() {
 		setOpen(false);
 	};
 
-	const onSubmit = (data) => {
-		dispatch(addNewItem(data));
+	const onSubmit = (item) => {
+		dispatch(addNewItem(item));
 		setOpen(false);
 	};
 
@@ -61,7 +61,6 @@ export default function AddEventForm() {
 								variant="outlined"
 								required
 								fullWidth
-								id="eventName"
 								label="Name"
 								name="name"
 								autoComplete="eventName"
@@ -77,7 +76,6 @@ export default function AddEventForm() {
 								variant="outlined"
 								required
 								fullWidth
-								id="description"
 								label="Add note"
 								name="description"
 								placeholder="Input event name here"
@@ -98,6 +96,7 @@ export default function AddEventForm() {
 						type="submit"
 						variant="contained"
 						sx={{ mt: 3, mb: 2 }}
+						disabled={!isValid}
 						onClick={handleSubmit(onSubmit)}
 					>
 						Create Event

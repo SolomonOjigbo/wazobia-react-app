@@ -57,3 +57,27 @@ export const signup = createAsyncThunk(
 		}
 	}
 );
+
+export const getUser = createAsyncThunk(
+	"getUser",
+	async ({ rejectWithValue }) => {
+		let token = JSON.parse(localStorage.getItem("token"));
+		try {
+			const config = {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: "Bearer " + token,
+				},
+			};
+			const { data } = await axios.get(API_URL + "me", config);
+			localStorage.setItem("user", data.user);
+			return data;
+		} catch (error) {
+			if (error.response && error.response.data.message) {
+				return rejectWithValue(error.response.data.message);
+			} else {
+				return rejectWithValue(error.message);
+			}
+		}
+	}
+);

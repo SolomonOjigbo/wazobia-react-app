@@ -7,7 +7,14 @@ export const fetchItems = createAsyncThunk(
 	"items/fetchItems",
 	async ({ rejectWithValue }) => {
 		try {
-			const data = await axios.get(API_URL + "items");
+			let token = JSON.parse(localStorage.getItem(token));
+			const config = {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: "Bearer " + token,
+				},
+			};
+			const { data } = await axios.get(API_URL + "items", config);
 			return data;
 		} catch (error) {
 			if (error.response && error.response.data.message) {
@@ -20,11 +27,21 @@ export const fetchItems = createAsyncThunk(
 );
 
 export const addNewItem = createAsyncThunk(
-	"items/addNewItem",
+	"addNewItem",
 	async ({ name, description }, { rejectWithValue }) => {
 		try {
-			const data = await axios.post(API_URL + "items", { name, description });
-			return data;
+			let token = JSON.parse(localStorage.getItem(token));
+			const config = {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: "Bearer " + token,
+				},
+			};
+			const { item } = await axios.post(API_URL + "items", config, {
+				name,
+				description,
+			});
+			return item;
 		} catch (error) {
 			if (error.response && error.response.data.message) {
 				return rejectWithValue(error.response.data.message);
@@ -36,10 +53,20 @@ export const addNewItem = createAsyncThunk(
 );
 
 export const updateItem = createAsyncThunk(
-	"items/updateItem",
+	"updateItem",
 	async ({ item, id }, { rejectWithValue }) => {
 		try {
-			const data = await axios.put(`${API_URL}/items/${id}`, { id, item });
+			let token = JSON.parse(localStorage.getItem(token));
+			const config = {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: "Bearer " + token,
+				},
+			};
+			const { data } = await axios.put(`${API_URL}/items/${id}`, config, {
+				id,
+				item,
+			});
 			return data;
 		} catch (error) {
 			if (error.response && error.response.data.message) {
@@ -55,7 +82,14 @@ export const deleteItem = createAsyncThunk(
 	"items/deleteItem",
 	async ({ id }, { rejectWithValue }) => {
 		try {
-			const response = await axios.delete(API_URL + `items/${id}`, id);
+			let token = JSON.parse(localStorage.getItem(token));
+			const config = {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: "Bearer " + token,
+				},
+			};
+			const response = await axios.delete(API_URL + `items/${id}`, id, config);
 			if (response?.status === 200) return response;
 			return `${response?.status}: ${response?.message}`;
 		} catch (error) {
